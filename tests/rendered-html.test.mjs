@@ -157,7 +157,7 @@ test("renders the Home conversion paths and local context", async () => {
   assert.match(html, /Venha viver a sua pausa favorita/i);
 });
 
-test("renders confirmed and pending institutional information responsibly", async () => {
+test("renders confirmed institutional and contact information", async () => {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set("institutional", `${process.pid}-${Date.now()}`);
   const { default: worker } = await import(workerUrl.href);
@@ -192,8 +192,11 @@ test("renders confirmed and pending institutional information responsibly", asyn
   assert.match(services, /Em planejamento/i);
   assert.match(services, /ainda não são apresentados como serviços disponíveis/i);
   assert.match(contact, /Av\. Luiz Dias Martins, 73/i);
-  assert.match(contact, /Número oficial aguardando confirmação/i);
+  assert.match(contact, /\(21\) 96475-5168/i);
+  assert.match(contact, /api\.whatsapp\.com\/send\?phone=5521964755168/i);
   assert.match(contact, /Google Maps/i);
+  assert.match(contact, /google\.com\/maps\/place\/DR\.\+COFFEE\+STATION/i);
+  assert.doesNotMatch(contact, /aguardando confirmação/i);
 });
 
 test("renders the future shop without checkout or an unconfigured lead form", async () => {
@@ -407,6 +410,11 @@ test("renders the complete Experiences page as indexable content", async () => {
   assert.match(html, /Momentos para aproveitar com calma/i);
   assert.match(html, /Cada pausa pode ter um sabor/i);
   assert.match(html, /Alpha Center/i);
+  assert.match(html, /Galeria de sabores e momentos/i);
+  assert.match(html, /Exibir imagens anteriores/i);
+  assert.match(html, /Exibir próximas imagens/i);
+  assert.match(html, /Cappuccinos preparados na Dr\. Coffee Station/i);
+  assert.match(html, /Ambiente interno da Dr\. Coffee Station/i);
   assert.match(html, /rel=["']canonical["'][^>]+\/experiencias/i);
   assert.doesNotMatch(html, /name=["']robots["'][^>]+noindex/i);
 });

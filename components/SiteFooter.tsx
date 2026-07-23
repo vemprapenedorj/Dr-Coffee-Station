@@ -30,15 +30,16 @@ export function SiteFooter() {
             <br />
             {siteConfig.address.neighborhood} — {siteConfig.address.city}, {siteConfig.address.region}
           </address>
-          <a
-            href={siteConfig.instagram.url}
-            target="_blank"
-            rel="noreferrer"
-            className="footer-instagram"
-          >
-            <SocialIcon name="instagram" />
-            {siteConfig.instagram.handle}
-          </a>
+          <div className="footer-social-links">
+            <a href={siteConfig.whatsapp.url} target="_blank" rel="noreferrer" aria-label={`WhatsApp ${siteConfig.whatsapp.display}`}>
+              <SocialIcon name="whatsapp" />
+              {siteConfig.whatsapp.display}
+            </a>
+            <a href={siteConfig.instagram.url} target="_blank" rel="noreferrer" aria-label={`Instagram ${siteConfig.instagram.handle}`}>
+              <SocialIcon name="instagram" />
+              {siteConfig.instagram.handle}
+            </a>
+          </div>
         </div>
       </div>
       <div className="site-footer__bottom">
@@ -48,4 +49,3 @@ export function SiteFooter() {
     </footer>
   );
 }
-

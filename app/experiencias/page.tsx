@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { ExperienceCarousel } from "@/components/ExperienceCarousel";
 import { siteConfig } from "@/content/site";
 
 export const metadata: Metadata = {
@@ -97,37 +98,7 @@ export default function ExperienciasPage() {
         </div>
       </section>
 
-      <section className="experiences-gallery" aria-label="Sabores da Dr. Coffee Station">
-        <figure className="experiences-gallery__large">
-          <Image
-            src="/images/institucional/dr-coffee-cappuccinos.png"
-            alt="Cappuccinos preparados na Dr. Coffee Station"
-            width={1400}
-            height={900}
-            sizes="(max-width: 850px) 100vw, 58vw"
-          />
-        </figure>
-        <div className="experiences-gallery__stack">
-          <figure>
-            <Image
-              src="/images/cardapio/dr-coffee-sandwich.png"
-              alt="Sanduíche artesanal servido na Dr. Coffee Station"
-              width={900}
-              height={900}
-              sizes="(max-width: 850px) 100vw, 42vw"
-            />
-          </figure>
-          <figure>
-            <Image
-              src="/images/cardapio/dr-coffee-iced-real.png"
-              alt="Bebida gelada da Dr. Coffee Station"
-              width={900}
-              height={900}
-              sizes="(max-width: 850px) 100vw, 42vw"
-            />
-          </figure>
-        </div>
-      </section>
+      <ExperienceCarousel />
 
       <section className="experiences-instagram">
         <div>

@@ -43,14 +43,25 @@ export default function SobrePage() {
           </p>
         </div>
         <div className="about-hero__image">
-          <Image
-            src="/images/institucional/dr-coffee-cappuccinos.png"
-            alt="Cappuccinos preparados na Dr. Coffee Station"
-            width={1200}
-            height={900}
-            sizes="(max-width: 850px) calc(100vw - 40px), 52vw"
-            priority
-          />
+          <div className="about-hero__image-panel">
+            <Image
+              src="/images/institucional/dr-coffee-cappuccinos.png"
+              alt="Dois cappuccinos preparados na Dr. Coffee Station"
+              fill
+              sizes="(max-width: 850px) calc(100vw - 40px), 52vw"
+              style={{ objectPosition: "center 48%" }}
+              priority
+            />
+          </div>
+          <div className="about-hero__image-panel">
+            <Image
+              src="/images/cardapio/dr-coffee-cappuccino-real.png"
+              alt="Cappuccino cremoso servido na Dr. Coffee Station"
+              fill
+              sizes="(max-width: 850px) calc(100vw - 40px), 52vw"
+              style={{ objectPosition: "center 54%" }}
+            />
+          </div>
         </div>
       </section>
 
@@ -99,8 +110,7 @@ export default function SobrePage() {
           <Image
             src="/images/institucional/dr-coffee-facade.png"
             alt="Fachada da Dr. Coffee Station no Alpha Center"
-            width={1300}
-            height={900}
+            fill
             sizes="(max-width: 850px) 100vw, 58vw"
           />
         </div>

@@ -31,5 +31,4 @@ Não basta inserir o ID no site: a coleta deve respeitar a escolha do visitante.
 
 ## Google Maps
 
-O mapa permanece desativado até a confirmação da URL oficial do perfil/local. Depois da confirmação, preencha `mapsUrl` em `content/site.ts` e substitua o placeholder da página de contato.
-
+O perfil oficial da Dr. Coffee Station está configurado em `mapsUrl`, em `content/site.ts`, e é usado nos links de localização e nos dados estruturados da cafeteria.
