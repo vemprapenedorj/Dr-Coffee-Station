@@ -34,6 +34,38 @@ test("renders development preview metadata", async () => {
   assert.match(await response.text(), developmentPreviewMeta);
 });
 
+test("serves local images without a Cloudflare Images binding", async () => {
+  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
+  workerUrl.searchParams.set("images", `${process.pid}-${Date.now()}`);
+  const { default: worker } = await import(workerUrl.href);
+  const imageBody = new Uint8Array([137, 80, 78, 71]);
+
+  const response = await worker.fetch(
+    new Request(
+      "http://localhost/_vinext/image?url=%2Fimages%2Ftest.png&w=640&q=75",
+    ),
+    {
+      ASSETS: {
+        fetch: async () =>
+          new Response(imageBody, {
+            headers: { "content-type": "image/png" },
+          }),
+      },
+    },
+    {
+      waitUntil() {},
+      passThroughOnException() {},
+    },
+  );
+
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("content-type"), "image/png");
+  assert.deepEqual(
+    new Uint8Array(await response.arrayBuffer()),
+    imageBody,
+  );
+});
+
 test("renders every public route with the shared navigation", async () => {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set("routes", `${process.pid}-${Date.now()}`);
