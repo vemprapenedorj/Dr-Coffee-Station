@@ -45,11 +45,17 @@ export function SiteHeader() {
         </nav>
 
         <div className="header-actions">
-          <Link className="header-contact-link" href="/contato">
-            Contato
-          </Link>
           <a
-            className="social-link"
+            className="social-link social-link--whatsapp"
+            href={siteConfig.whatsapp.url}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={`Falar com a Dr. Coffee Station pelo WhatsApp ${siteConfig.whatsapp.display}`}
+          >
+            <SocialIcon name="whatsapp" />
+          </a>
+          <a
+            className="social-link social-link--instagram"
             href={siteConfig.instagram.url}
             target="_blank"
             rel="noreferrer"
@@ -91,14 +97,14 @@ export function SiteHeader() {
           </nav>
           <div className="mobile-menu__footer">
             <p>{siteConfig.address.display}</p>
-            <a
-              href={siteConfig.instagram.url}
-              target="_blank"
-              rel="noreferrer"
-              tabIndex={isOpen ? 0 : -1}
-            >
-              {siteConfig.instagram.handle}
-            </a>
+            <div className="mobile-menu__socials">
+              <a href={siteConfig.whatsapp.url} target="_blank" rel="noreferrer" tabIndex={isOpen ? 0 : -1} aria-label="WhatsApp">
+                <SocialIcon name="whatsapp" />
+              </a>
+              <a href={siteConfig.instagram.url} target="_blank" rel="noreferrer" tabIndex={isOpen ? 0 : -1} aria-label="Instagram">
+                <SocialIcon name="instagram" />
+              </a>
+            </div>
           </div>
         </div>
       </header>

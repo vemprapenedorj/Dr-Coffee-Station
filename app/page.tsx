@@ -252,13 +252,10 @@ export default function Home() {
             {siteConfig.address.neighborhood} — {siteConfig.address.city},{" "}
             {siteConfig.address.region}
           </address>
-          <p>
-            Consulte a página de contato para acompanhar a inclusão do mapa,
-            horários e canais oficiais.
-          </p>
-          <Link className="button button-dark" href="/contato">
-            Ver localização e contato
-          </Link>
+          <p>Abra a localização oficial no Google Maps e trace sua rota até a cafeteria.</p>
+          <a className="button button-dark" href={siteConfig.mapsUrl} target="_blank" rel="noreferrer">
+            Abrir no Google Maps
+          </a>
         </div>
       </section>
 

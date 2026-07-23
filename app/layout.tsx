@@ -90,7 +90,9 @@ export default function RootLayout({
             image: `${siteConfig.url}/images/home/dr-coffee-hero.png`,
             logo: `${siteConfig.url}/images/brand/dr-coffee-logo-transparent.png`,
             menu: `${siteConfig.url}/cardapio`,
-            sameAs: [siteConfig.instagram.url],
+            telephone: siteConfig.whatsapp.phone,
+            hasMap: siteConfig.mapsUrl,
+            sameAs: [siteConfig.instagram.url, siteConfig.mapsUrl],
             address: {
               "@type": "PostalAddress",
               streetAddress: siteConfig.address.street,

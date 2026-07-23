@@ -1,21 +1,37 @@
-# vinext-starter
+# Dr. Coffee Station
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+Site institucional da Dr. Coffee Station, construído com Next.js e preparado
+para deploy gerenciado na Hostinger. O projeto mantém um build alternativo com
+vinext para compatibilidade com Cloudflare/OpenAI Sites.
 
 ## Prerequisites
 
 - Node.js `>=22.13.0`
-- Linux with `flock`, `curl`, and GNU `timeout`
+- Linux com `flock`, `curl` e GNU `timeout` somente para o build Cloudflare
+
+## Deploy na Hostinger
+
+Crie o site no hPanel como **Node.js Web App**, conecte este repositório do
+GitHub e selecione **Next.js**.
+
+- Node.js: `22`
+- build: `npm run build`
+- inicialização: `npm run start`
+- variável obrigatória: `NEXT_PUBLIC_SITE_URL`, com a URL temporária ou o
+  domínio definitivo sem barra no final
+- variável opcional: `GOOGLE_SITE_VERIFICATION`
+
+Quando o domínio definitivo for conectado, altere `NEXT_PUBLIC_SITE_URL` no
+hPanel e faça um novo deploy. Essa variável alimenta URLs canônicas, sitemap,
+robots, Open Graph e dados estruturados.
 
 ## Sites Lifecycle
 
-The Sites lifecycle CLI runs the locked dependency install before returning this checkout. Edit the source under `app/`, then checkpoint when a coherent milestone is ready to inspect or share. The remote Sites builder runs `npm run build` against the pushed commit. Do not repeat install or build as a normal pre-checkpoint step.
+The Sites lifecycle CLI runs the locked dependency install before returning this checkout. Edit the source under `app/`, then checkpoint when a coherent milestone is ready to inspect or share. The remote Sites builder runs `npm run build:cloudflare` against the pushed commit.
 
 This starter does not use `wrangler.jsonc`.
 
-`install:ci` is intentionally a single, non-retrying `npm ci`. It refuses a concurrent install for the same project, consumes a matching image-seeded npm cache with `--prefer-offline` while retaining registry fallback for a missing cache object, otherwise downloads and verifies the complete vinext tarball recorded in `package-lock.json`, limits npm to one socket, and terminates a stalled install. `build` applies a short timeout and then validates the Sites artifact. These helpers target Linux and use GNU `timeout`; they are not native macOS scripts.
+`install:ci` is intentionally a single, non-retrying `npm ci`. It refuses a concurrent install for the same project, consumes a matching image-seeded npm cache with `--prefer-offline` while retaining registry fallback for a missing cache object, otherwise downloads and verifies the complete vinext tarball recorded in `package-lock.json`, limits npm to one socket, and terminates a stalled install. `build:cloudflare` applies a short timeout and then validates the Sites artifact. These helpers target Linux and use GNU `timeout`; they are not native macOS scripts.
 
 Scripts that need writable project-scoped home, npm, XDG, and temporary paths use `scripts/sites-env.sh`. The `dev` and `start` scripts honor the caller's runtime environment and keep Wrangler logs inside the checkout. The generated `.sites-runtime/` directory is disposable and ignored by Git.
 
@@ -91,10 +107,13 @@ actions tied to the current ChatGPT user. Leave public content anonymous.
 ## Diagnostic Commands
 
 - `npm run install:ci`: perform the one bounded lockfile install
-- `npm run dev`: start the Vite/Vinext development server
-- `npm run build`: build and validate the deployable Sites artifact
-- `npm run start`: start the built Vinext application
-- `npm test`: build, validate, and verify the rendered development-preview metadata
+- `npm run dev`: iniciar o servidor de desenvolvimento Next.js
+- `npm run build`: gerar o build Next.js usado pela Hostinger
+- `npm run start`: iniciar o build Next.js
+- `npm run dev:cloudflare`: iniciar o ambiente Vite/Vinext alternativo
+- `npm run build:cloudflare`: gerar e validar o artefato Cloudflare/OpenAI Sites
+- `npm run preview:cloudflare`: visualizar o build Cloudflare localmente
+- `npm test`: gerar o build Cloudflare e verificar a renderização
 - `npm run validate:artifact`: recheck an existing artifact's manifest and ESM `default.fetch` export
 - `npm run db:generate`: generate Drizzle migrations after schema changes
 
