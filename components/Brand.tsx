@@ -13,6 +13,11 @@ export function Brand({ compact = false }: BrandProps) {
         alt="Dr. Coffee — Especializado no seu café"
         width={490}
         height={272}
+        sizes={
+          compact
+            ? "190px"
+            : "(max-width: 520px) 150px, (max-width: 850px) 185px, 200px"
+        }
         priority={!compact}
       />
     </span>

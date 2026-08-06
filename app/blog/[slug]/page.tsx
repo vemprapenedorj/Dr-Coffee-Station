@@ -39,8 +39,17 @@ export async function generateMetadata({
       type: "article",
       title: article.title,
       description: article.description,
+      url: `/blog/${article.slug}`,
+      siteName: siteConfig.name,
+      locale: "pt_BR",
       images: [{ url: article.image, alt: article.imageAlt }],
       publishedTime: article.publishedAt,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description: article.description,
+      images: [article.image],
     },
   };
 }
@@ -182,9 +191,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <Link className="button button-light" href="/cardapio">
             Abrir cardápio
           </Link>
-          <Link className="button outline-light" href="/contato">
+          <a className="button outline-light" href={siteConfig.mapsUrl} target="_blank" rel="noreferrer">
             Ver localização
-          </Link>
+          </a>
         </div>
       </section>
     </main>

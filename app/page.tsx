@@ -4,9 +4,34 @@ import Link from "next/link";
 import { siteConfig } from "@/content/site";
 
 export const metadata: Metadata = {
-  title: "Café especial em Resende",
+  title: { absolute: "Dr. Coffee Station | Café especial em Resende" },
   description:
     "Cafeteria no Alpha Center, em Resende, com cafés especiais, cappuccinos, bebidas geladas, sanduíches, doces e opções para o café da manhã.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    url: "/",
+    siteName: siteConfig.name,
+    title: "Dr. Coffee Station | Café especial em Resende",
+    description:
+      "Cafeteria no Alpha Center, em Resende, com cafés especiais, cappuccinos, bebidas geladas, sanduíches, doces e opções para o café da manhã.",
+    images: [
+      {
+        url: "/images/home/dr-coffee-hero.png",
+        width: 1536,
+        height: 1024,
+        alt: "Café especial preparado na Dr. Coffee Station",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Dr. Coffee Station | Café especial em Resende",
+    description:
+      "Cafeteria no Alpha Center, em Resende, com cafés especiais e boas pausas.",
+    images: ["/images/home/dr-coffee-hero.png"],
+  },
 };
 
 const highlights = [
@@ -83,9 +108,9 @@ export default function Home() {
             <Link className="button button-dark" href="/cardapio">
               Ver cardápio
             </Link>
-            <Link className="button button-outline" href="/contato">
+            <a className="button button-outline" href={siteConfig.mapsUrl} target="_blank" rel="noreferrer">
               Como chegar <span aria-hidden="true">→</span>
-            </Link>
+            </a>
           </div>
         </div>
         <div className="hero-image-wrap">
@@ -97,6 +122,7 @@ export default function Home() {
             height={1200}
             sizes="(max-width: 850px) calc(100vw - 40px), 54vw"
             priority
+            fetchPriority="high"
           />
         </div>
       </section>
@@ -194,15 +220,15 @@ export default function Home() {
 
       <section className="experience-section">
         <div className="experience-section__copy">
-          <p className="eyebrow">A EXPERIÊNCIA</p>
-          <h2>Um lugar para o café e para o momento.</h2>
+          <p className="eyebrow">WORKSHOPS & ENCONTROS</p>
+          <h2>Aprenda, deguste e vivencie o café.</h2>
           <p>
-            A experiência Dr. Coffee Station começa no aroma do café e continua
-            no ambiente, na conversa e na vontade de ficar só mais um pouco.
+            Promovemos workshops práticos, degustações guiadas e eventos
+            exclusivos para quem deseja explorar o universo dos cafés especiais.
           </p>
           <div className="experience-section__links">
-            <Link className="text-link" href="/experiencias">
-              Conhecer a experiência <span aria-hidden="true">→</span>
+            <Link className="text-link" href="/workshop">
+              Conhecer workshops <span aria-hidden="true">→</span>
             </Link>
             <a
               className="text-link"

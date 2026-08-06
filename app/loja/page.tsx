@@ -138,9 +138,9 @@ export default function LojaPage() {
           <Link className="button button-dark" href="/cardapio">
             Ver cardápio
           </Link>
-          <Link className="button button-outline" href="/contato">
+          <a className="button button-outline" href={siteConfig.mapsUrl} target="_blank" rel="noreferrer">
             Ver localização
-          </Link>
+          </a>
         </div>
       </section>
     </main>

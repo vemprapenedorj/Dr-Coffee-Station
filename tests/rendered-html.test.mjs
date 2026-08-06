@@ -34,6 +34,39 @@ test("renders development preview metadata", async () => {
   assert.match(await response.text(), developmentPreviewMeta);
 });
 
+test("serves baseline security headers", async () => {
+  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
+  workerUrl.searchParams.set("security-headers", `${process.pid}-${Date.now()}`);
+  const { default: worker } = await import(workerUrl.href);
+  const response = await worker.fetch(
+    new Request("http://localhost/workshop", {
+      headers: { accept: "text/html" },
+    }),
+    {
+      ASSETS: {
+        fetch: async () => new Response("Not found", { status: 404 }),
+      },
+    },
+    {
+      waitUntil() {},
+      passThroughOnException() {},
+    },
+  );
+
+  assert.equal(response.headers.get("x-content-type-options"), "nosniff");
+  assert.equal(response.headers.get("x-frame-options"), "SAMEORIGIN");
+  assert.equal(
+    response.headers.get("referrer-policy"),
+    "strict-origin-when-cross-origin",
+  );
+  assert.equal(
+    response.headers.get("permissions-policy"),
+    "camera=(), microphone=(), geolocation=()",
+  );
+  assert.equal(response.headers.get("cross-origin-opener-policy"), "same-origin");
+  assert.equal(response.headers.has("x-powered-by"), false);
+});
+
 test("serves local images without a Cloudflare Images binding", async () => {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set("images", `${process.pid}-${Date.now()}`);
@@ -73,12 +106,10 @@ test("renders every public route with the shared navigation", async () => {
   const routes = [
     "/",
     "/sobre",
-    "/servicos",
+    "/workshop",
     "/loja",
     "/cardapio",
-    "/contato",
     "/blog",
-    "/experiencias",
   ];
 
   for (const route of routes) {
@@ -152,7 +183,7 @@ test("renders the Home conversion paths and local context", async () => {
   assert.equal(response.status, 200);
   assert.match(html, /Café especial em Resende/i);
   assert.match(html, /href=["']\/cardapio["']/i);
-  assert.match(html, /href=["']\/contato["']/i);
+  assert.match(html, /google\.com\/maps/i);
   assert.match(html, /instagram\.com\/dr\.coffeestation/i);
   assert.match(html, /Venha viver a sua pausa favorita/i);
 });
@@ -181,22 +212,15 @@ test("renders confirmed institutional and contact information", async () => {
     return response.text();
   };
 
-  const [about, services, contact] = await Promise.all([
+  const [about, workshop] = await Promise.all([
     fetchPage("/sobre"),
-    fetchPage("/servicos"),
-    fetchPage("/contato"),
+    fetchPage("/workshop"),
   ]);
 
   assert.match(about, /Café, pausa e encontro/i);
   assert.match(about, /Alpha Center/i);
-  assert.match(services, /Em planejamento/i);
-  assert.match(services, /ainda não são apresentados como serviços disponíveis/i);
-  assert.match(contact, /Av\. Luiz Dias Martins, 73/i);
-  assert.match(contact, /\(21\) 96475-5168/i);
-  assert.match(contact, /api\.whatsapp\.com\/send\?phone=5521964755168/i);
-  assert.match(contact, /Google Maps/i);
-  assert.match(contact, /google\.com\/maps\/place\/DR\.\+COFFEE\+STATION/i);
-  assert.doesNotMatch(contact, /aguardando confirmação/i);
+  assert.match(workshop, /Aprenda, deguste e vivencie/i);
+  assert.match(workshop, /Workshops/i);
 });
 
 test("renders the future shop without checkout or an unconfigured lead form", async () => {
@@ -296,7 +320,7 @@ test("renders the Blog listing and every initial article", async () => {
     const article = await fetchPage(`/blog/${slug}`);
     assert.match(article, /Artigos relacionados/i);
     assert.match(article, /href=["']\/cardapio["']/i);
-    assert.match(article, /href=["']\/contato["']/i);
+    assert.match(article, /google\.com\/maps/i);
   }
 });
 
@@ -334,7 +358,7 @@ test("serves technical SEO routes with only indexable URLs", async () => {
   assert.match(robots, /Sitemap:.*\/sitemap\.xml/i);
   assert.match(sitemap, /\/cardapio</i);
   assert.match(sitemap, /\/blog\/onde-tomar-cafe-especial-em-resende</i);
-  assert.match(sitemap, /\/experiencias</i);
+  assert.match(sitemap, /\/workshop</i);
   assert.doesNotMatch(sitemap, /\/loja</i);
   assert.match(manifest, /Dr\. Coffee Station/i);
   assert.match(manifest, /#381a0b/i);
@@ -363,14 +387,26 @@ test("renders canonical URLs and structured data", async () => {
     return response.text();
   };
 
-  const contact = await fetchHtml("/contato");
+  const about = await fetchHtml("/sobre");
   assert.match(
-    contact,
-    /rel=["']canonical["'][^>]+href=["'][^"']+\/contato["']/i,
+    about,
+    /rel=["']canonical["'][^>]+href=["'][^"']+\/sobre["']/i,
   );
-  assert.match(contact, /CafeOrCoffeeShop/i);
-  assert.match(contact, /PostalAddress/i);
-  assert.doesNotMatch(contact, /google-site-verification[^>]+fict/i);
+  assert.match(
+    about,
+    /property=["']og:url["'][^>]+content=["'][^"']+\/sobre["']/i,
+  );
+
+  for (const route of ["/cardapio", "/blog", "/workshop"]) {
+    const html = await fetchHtml(route);
+    assert.match(
+      html,
+      new RegExp(
+        `property=["']og:url["'][^>]+content=["'][^"']+${route.replace("/", "\\/")}["']`,
+        "i",
+      ),
+    );
+  }
 
   const article = await fetchHtml(
     "/blog/cappuccino-cremoso-o-que-faz-a-diferenca",
@@ -381,17 +417,21 @@ test("renders canonical URLs and structured data", async () => {
     article,
     /rel=["']canonical["'][^>]+href=["'][^"']+\/blog\/cappuccino-cremoso-o-que-faz-a-diferenca["']/i,
   );
+  assert.match(
+    article,
+    /property=["']og:url["'][^>]+content=["'][^"']+\/blog\/cappuccino-cremoso-o-que-faz-a-diferenca["']/i,
+  );
 
   const shop = await fetchHtml("/loja");
   assert.match(shop, /name=["']robots["'][^>]+noindex/i);
 });
 
-test("renders the complete Experiences page as indexable content", async () => {
+test("renders the complete menu as server-rendered semantic content", async () => {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("experiences", `${process.pid}-${Date.now()}`);
+  workerUrl.searchParams.set("menu-content", `${process.pid}-${Date.now()}`);
   const { default: worker } = await import(workerUrl.href);
   const response = await worker.fetch(
-    new Request("http://localhost/experiencias", {
+    new Request("http://localhost/cardapio", {
       headers: { accept: "text/html" },
     }),
     {
@@ -407,16 +447,86 @@ test("renders the complete Experiences page as indexable content", async () => {
   const html = await response.text();
 
   assert.equal(response.status, 200);
-  assert.match(html, /Momentos para aproveitar com calma/i);
-  assert.match(html, /Cada pausa pode ter um sabor/i);
+  assert.match(html, /Card.pio completo em lista/i);
+  assert.match(html, /Caf. Espresso/i);
+  assert.match(html, /Torta de Ma./i);
+  assert.match(html, /<ul class=["']menu-catalog__items["']/i);
+});
+
+test("renders the complete Workshop page as indexable content", async () => {
+  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
+  workerUrl.searchParams.set("workshop", `${process.pid}-${Date.now()}`);
+  const { default: worker } = await import(workerUrl.href);
+  const response = await worker.fetch(
+    new Request("http://localhost/workshop", {
+      headers: { accept: "text/html" },
+    }),
+    {
+      ASSETS: {
+        fetch: async () => new Response("Not found", { status: 404 }),
+      },
+    },
+    {
+      waitUntil() {},
+      passThroughOnException() {},
+    },
+  );
+  const html = await response.text();
+
+  assert.equal(response.status, 200);
+  assert.match(html, /Aprenda, deguste e vivencie/i);
   assert.match(html, /Alpha Center/i);
-  assert.match(html, /Galeria de sabores e momentos/i);
-  assert.match(html, /Exibir imagens anteriores/i);
-  assert.match(html, /Exibir próximas imagens/i);
-  assert.match(html, /Cappuccinos preparados na Dr\. Coffee Station/i);
-  assert.match(html, /Ambiente interno da Dr\. Coffee Station/i);
-  assert.match(html, /rel=["']canonical["'][^>]+\/experiencias/i);
+  assert.match(html, /Galeria de fotos/i);
+  assert.match(html, /Próximos workshops/i);
+  assert.match(html, /rel=["']canonical["'][^>]+\/workshop/i);
+  assert.match(html, /EducationEvent/i);
   assert.doesNotMatch(html, /name=["']robots["'][^>]+noindex/i);
+});
+
+test("keeps legacy routes redirecting", async () => {
+  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
+  workerUrl.searchParams.set("redirects", `${process.pid}-${Date.now()}`);
+  const { default: worker } = await import(workerUrl.href);
+
+  for (const legacyRoute of ["/servicos", "/experiencias"]) {
+    const response = await worker.fetch(
+      new Request(`http://localhost${legacyRoute}`, {
+        headers: { accept: "text/html" },
+        redirect: "manual",
+      }),
+      {
+        ASSETS: {
+          fetch: async () => new Response("Not found", { status: 404 }),
+        },
+      },
+      {
+        waitUntil() {},
+        passThroughOnException() {},
+      },
+    );
+
+    assert.equal(response.status, 308, `${legacyRoute} should redirect permanently`);
+    assert.equal(new URL(response.headers.get("location")).pathname, "/workshop");
+  }
+
+  const contactResponse = await worker.fetch(
+    new Request("http://localhost/contato", {
+      headers: { accept: "text/html" },
+      redirect: "manual",
+    }),
+    {
+      ASSETS: {
+        fetch: async () => new Response("Not found", { status: 404 }),
+      },
+    },
+    {
+      waitUntil() {},
+      passThroughOnException() {},
+    },
+  );
+
+  assert.equal(contactResponse.status, 307);
+  assert.equal(new URL(contactResponse.headers.get("location")).pathname, "/");
 });
 
 test("keeps every internal navigation link reachable", async () => {
@@ -426,12 +536,10 @@ test("keeps every internal navigation link reachable", async () => {
   const seedRoutes = [
     "/",
     "/sobre",
-    "/servicos",
+    "/workshop",
     "/loja",
     "/cardapio",
-    "/contato",
     "/blog",
-    "/experiencias",
     "/blog/onde-tomar-cafe-especial-em-resende",
     "/blog/cappuccino-cremoso-o-que-faz-a-diferenca",
     "/blog/cafe-da-manha-em-resende-para-aproveitar-a-dois",

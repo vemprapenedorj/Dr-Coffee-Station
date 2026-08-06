@@ -96,6 +96,10 @@ const pages: BookPage[] = [
   { type: "closing", eyebrow: "ATÉ A PRÓXIMA PAUSA", title: "A gente te\nespera.", copy: "Venha viver o café com calma. Acompanhe as novidades, envie uma mensagem ou visite a Dr. Coffee Station no Alpha Center.", photo: "facade", photoAtBottom: true },
 ];
 
+const menuPages = pages.filter(
+  (page): page is BookPage & { items: Item[] } => Boolean(page.items?.length),
+);
+
 function MenuRows({ items = [] }: { items?: Item[] }) {
   return <div className="menu-rows">
     {items.map((item) => <div key={item.name} className={item.spacedSection ? "menu-section-break" : undefined}>
@@ -125,6 +129,53 @@ function PaperPage({ page, number }: { page: BookPage; number: number }) {
     <span className="page-number">{number}</span>
     {number > 1 && <Image className="book-footer-logo" src="/images/brand/dr-coffee-cup-logo-transparent.png" alt="" aria-hidden="true" width={62} height={62} />}
   </article>;
+}
+
+function MenuCatalog() {
+  return (
+    <section className="menu-catalog" aria-labelledby="menu-catalog-title">
+      <div className="menu-catalog__heading">
+        <p className="eyebrow">CONSULTA RÁPIDA E ACESSÍVEL</p>
+        <h2 id="menu-catalog-title">Cardápio completo em lista.</h2>
+        <p>
+          Consulte todos os itens e preços sem precisar navegar pelas páginas da
+          revista.
+        </p>
+      </div>
+
+      <div className="menu-catalog__grid">
+        {menuPages.map((page, pageIndex) => (
+          <section
+            className="menu-catalog__group"
+            key={`${page.eyebrow}-${pageIndex}`}
+            aria-labelledby={`menu-group-${pageIndex}`}
+          >
+            <p className="menu-catalog__eyebrow">{page.eyebrow}</p>
+            <h3 id={`menu-group-${pageIndex}`}>
+              {(page.title ?? page.eyebrow).replace("\n", " ")}
+            </h3>
+            {page.copy ? <p className="menu-catalog__copy">{page.copy}</p> : null}
+            <ul className="menu-catalog__items">
+              {page.items.map((item, itemIndex) => (
+                <li key={`${item.name}-${itemIndex}`}>
+                  {item.section ? (
+                    <p className="menu-catalog__section">{item.section}</p>
+                  ) : null}
+                  <div className="menu-catalog__row">
+                    <div>
+                      <strong>{item.name}</strong>
+                      {item.description ? <span>{item.description}</span> : null}
+                    </div>
+                    <b>{item.price}</b>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+    </section>
+  );
 }
 
 export default function CardapioBook() {
@@ -180,5 +231,6 @@ export default function CardapioBook() {
       <button className="book-arrow book-arrow-right" onClick={() => move(1)} disabled={!canGoNext} aria-label="Próxima página">→</button>
     </div>
     <div className="book-controls"><button onClick={() => move(-1)} disabled={!canGoPrevious}>← Anterior</button><span>{pageIndicator}</span><button onClick={() => move(1)} disabled={!canGoNext}>Próxima →</button></div>
+    <MenuCatalog />
   </section>;
 }

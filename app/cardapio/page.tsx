@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { siteConfig } from "@/content/site";
 import CardapioBook from "./CardapioBook";
 
 export const metadata: Metadata = {
@@ -7,6 +8,30 @@ export const metadata: Metadata = {
   description:
     "Conheça o cardápio da Dr. Coffee Station: cafés especiais, bebidas geladas e acompanhamentos preparados com calma.",
   alternates: { canonical: "/cardapio" },
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    url: "/cardapio",
+    siteName: siteConfig.name,
+    title: "Cardápio da Dr. Coffee Station",
+    description:
+      "Conheça cafés especiais, bebidas geladas, sanduíches, doces e acompanhamentos.",
+    images: [
+      {
+        url: "/images/cardapio/dr-coffee-menu-cover.png",
+        width: 1080,
+        height: 1080,
+        alt: "Cardápio digital da Dr. Coffee Station",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Cardápio da Dr. Coffee Station",
+    description:
+      "Cafés especiais, bebidas geladas, sanduíches, doces e acompanhamentos.",
+    images: ["/images/cardapio/dr-coffee-menu-cover.png"],
+  },
 };
 
 export default function CardapioPage() {
@@ -39,6 +64,7 @@ export default function CardapioPage() {
             height={1000}
             sizes="(max-width: 850px) calc(100vw - 40px), 55vw"
             priority
+            fetchPriority="high"
           />
           <span className="hero-leaf leaf-b" aria-hidden="true">
             ✦

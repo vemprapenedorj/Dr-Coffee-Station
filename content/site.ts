@@ -32,14 +32,12 @@ export const siteConfig = {
 
 export const primaryNavigation = [
   { href: "/", label: "Início" },
-  { href: "/cardapio", label: "Cardápio" },
   { href: "/sobre", label: "Sobre" },
-  { href: "/servicos", label: "Serviços" },
-  { href: "/experiencias", label: "Experiências" },
+  { href: "/cardapio", label: "Cardápio" },
+  { href: "/workshop", label: "Workshop" },
   { href: "/blog", label: "Blog" },
 ] as const;
 
 export const utilityNavigation = [
   { href: "/loja", label: "Loja" },
-  { href: "/contato", label: "Contato" },
 ] as const;

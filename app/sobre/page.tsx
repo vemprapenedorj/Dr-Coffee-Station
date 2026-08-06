@@ -1,12 +1,37 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { siteConfig } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Sobre",
   description:
     "Conheça a proposta da Dr. Coffee Station: café especial, acolhimento e boas pausas no Alpha Center, em Resende.",
   alternates: { canonical: "/sobre" },
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    url: "/sobre",
+    siteName: siteConfig.name,
+    title: "Sobre a Dr. Coffee Station",
+    description:
+      "Conheça a proposta da Dr. Coffee Station: café especial, acolhimento e boas pausas no Alpha Center, em Resende.",
+    images: [
+      {
+        url: "/images/institucional/dr-coffee-cappuccinos.png",
+        width: 1774,
+        height: 887,
+        alt: "Cappuccinos preparados na Dr. Coffee Station",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sobre a Dr. Coffee Station",
+    description:
+      "Café especial, acolhimento e boas pausas no Alpha Center, em Resende.",
+    images: ["/images/institucional/dr-coffee-cappuccinos.png"],
+  },
 };
 
 const values = [
@@ -51,6 +76,7 @@ export default function SobrePage() {
               sizes="(max-width: 850px) calc(100vw - 40px), 52vw"
               style={{ objectPosition: "center 48%" }}
               priority
+              fetchPriority="high"
             />
           </div>
           <div className="about-hero__image-panel">
@@ -130,9 +156,9 @@ export default function SobrePage() {
           <Link className="button button-light" href="/cardapio">
             Ver cardápio
           </Link>
-          <Link className="button outline-light" href="/contato">
+          <a className="button outline-light" href={siteConfig.mapsUrl} target="_blank" rel="noreferrer">
             Planejar uma visita
-          </Link>
+          </a>
         </div>
       </section>
     </main>

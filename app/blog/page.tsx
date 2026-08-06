@@ -2,12 +2,37 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArticleCard } from "@/components/ArticleCard";
 import { blogArticles, blogCategories } from "@/content/blog";
+import { siteConfig } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Blog",
   description:
     "Conteúdos da Dr. Coffee Station sobre café especial, métodos de preparo, gastronomia, novidades e experiências em Resende.",
   alternates: { canonical: "/blog" },
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    url: "/blog",
+    siteName: siteConfig.name,
+    title: "Blog da Dr. Coffee Station",
+    description:
+      "Conteúdos sobre café especial, métodos de preparo, gastronomia e experiências em Resende.",
+    images: [
+      {
+        url: "/images/home/dr-coffee-hero.png",
+        width: 1536,
+        height: 1024,
+        alt: "Café especial na Dr. Coffee Station",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Blog da Dr. Coffee Station",
+    description:
+      "Conteúdos sobre café especial, métodos de preparo e gastronomia em Resende.",
+    images: ["/images/home/dr-coffee-hero.png"],
+  },
 };
 
 export default function BlogPage() {
@@ -77,9 +102,9 @@ export default function BlogPage() {
           <Link className="button button-light" href="/cardapio">
             Ver cardápio
           </Link>
-          <Link className="button outline-light" href="/contato">
+          <a className="button outline-light" href={siteConfig.mapsUrl} target="_blank" rel="noreferrer">
             Visitar a Dr. Coffee
-          </Link>
+          </a>
         </div>
       </section>
     </main>
